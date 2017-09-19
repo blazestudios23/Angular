@@ -6,14 +6,14 @@
     fxLayoutGap="10px"
     fxLayoutGap.xs="0">
 
-    <div fxFlex="40" *ngIf="dish">
+    <div fxFlex="45" *ngIf="dish">
     <md-card>
     <md-card-header>
       <md-card-title>
         <h3>{{dish.name | uppercase}}</h3>
       </md-card-title>
     </md-card-header>
-    <img md-card-image src={{dish.image}} alt={{dish.name}}>
+    <img md-card-image src="{{BaseURL + dish.image}}" alt={{dish.name}}>
     <md-card-content>
       <p>{{dish.description}}
       </p>
@@ -44,10 +44,48 @@
     </p>
   </md-list-item>
 </md-list>
-  </div>
 
+
+  <md-list *ngIf="commentForm.valid">
+       <md-list-item>
+         <h4 md-line> {{commentForm.value.comment}}</h4>
+         <p md-line> {{commentForm.value.rating}} Stars</p>
+         <p md-line> -- {{commentForm.value.author}} {{commentForm.value.date | date}}</p>
+       </md-list-item>
+     </md-list>
+
+     <form novalidate [formGroup]="commentForm" (ngSubmit)="onSubmit()">
+       <p>
+         <md-input-container class="full-width" dividerColor="{{(formErrors.author) ? 'warn' : 'primary'}}">
+           <input mdInput formControlName="author" placeholder="Name" type="text" required>
+           <md-hint>
+             <span [hidden]="!(formErrors.author)">
+                   {{formErrors.author}}</span>
+           </md-hint>
+         </md-input-container>
+       </p>
+       <p>
+         <md-slider formControlName="rating" thumbLabel min="1" max="5" tickInterval="1"></md-slider>
+       </p>
+       <p>
+         <md-input-container class="full-width">
+           <textarea mdInput formControlName="comment" placeholder="Your Comment" rows=12></textarea>
+           <md-hint>
+             <span [hidden]="!(formErrors.comment)">
+                   {{formErrors.comment}}</span>
+           </md-hint>
+         </md-input-container>
+       </p>
+       <button type="submit" md-button class="background-primary text-floral-white" [disabled]="commentForm.invalid">Submit</button>
+     </form>
 </div>
 
-<div [hidden]="dish">
-    <md-spinner></md-spinner><h4>Loading . . . Please Wait</h4>
+     <div [hidden]="dish || errMess">
+         <md-spinner></md-spinner><h4>Loading . . . Please Wait</h4>
+     </div>
+     <div *ngIf="errMess">
+         <h2>Error</h2>
+         <h4>{{errMess}}</h4>
+     </div>
+
 </div>
